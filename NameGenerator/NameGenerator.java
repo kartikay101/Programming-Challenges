@@ -2,7 +2,7 @@
  * @Author: Kartikay Shandil <hunter>
  * @Date:   2018-07-09T10:43:28+05:30
  * @Last modified by:   hunter
- * @Last modified time: 2018-07-09T19:37:12+05:30
+ * @Last modified time: 2018-07-09T23:28:19+05:30
  */
 
 import javafx.application.Application;
@@ -27,7 +27,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import java.util.Scanner;
 import java.io.File;
-
+import java.io.FileNotFoundException;
 
 
 public class NameGenerator extends Application {
@@ -177,18 +177,102 @@ public class NameGenerator extends Application {
 
 		int race=(Integer) t1.getUserData();
 		int gender=(Integer) t2.getUserData();
-		String name="";
+		// ind_fname , ind_mnames , ind_surname , eng_fname , eng_mnames , eng_surname ,
+		int len[]={14210,13906,100,4275,1219,1000}; //fixed for now, needs better method
 
 		Scanner sc;
+		int index=0;
+		int rand;
+		String file="res/";
+		String name="";
+		boolean flag=false; // true for indian surname else foreign surname
+		if(race==1){
+			file+="ind_";
+		}
+		else if(race==2){
+			file+="eng_";
+			index=3;
+			flag=true;
+		}
+		else if(race==3){
+			rand=(int)(100*Math.random());
+			if(rand>50){
+				file+="eng_";
+				flag=true;
+				index=3;
+			}
+			else{
+				file+="ind_";
+			}
+		}
+
+		if(gender==1){
+			file+="mnames.txt";
+			index+=1;
+		}
+		else if(gender==2){
+			file+="fnames.txt";
+		}
+		else if(gender==3){
+			rand=(int)(100*Math.random());
+			if(rand>50){
+				file+="fnames.txt";
+			}
+			else{
+				file+="mnames.txt";
+				index+=1;
+			}
+		}
+
+		//generating name below
+
+		int num=0;
 		try{
-			sc=new Scanner(new File("res/ind_fnames.txt"));
-			for(int i=0;i<(int)1000*Math.random();i++){
+			sc=new Scanner(new File(file));
+			num=(int)(len[index]*Math.random());
+			for (int i=0;i<num;i++){
 				name=sc.nextLine();
 			}
-		}catch(Exception e){
-			System.out.println("filenotfound");
+			sc.close();
+		}catch(FileNotFoundException e){
+			return "File Not Found Check res folder for correct files";
 		}
-		return name;
+		catch(Exception e){
+			System.out.println("Fatal Error Occoured Please Restart The Code After Checking Integrety Of Files");//Display fatal error and exit
+			System.exit(0);
+		}
+
+		//generating surname
+
+		if(flag){
+			file="res/eng_surnames.txt";
+			index=5;
+		}
+		else{
+			file="res/ind_surnames.txt";
+			index=2;
+		}
+		String surname="";
+
+		try{
+			sc=new Scanner(new File(file));
+
+			num=(int)(len[index]*Math.random());
+			for (int i=0;i<num;i++){
+				surname=sc.nextLine();
+			}
+			sc.close();
+		}catch(FileNotFoundException e){
+			return "File Not Found Check res folder";
+		}
+		catch(Exception e){
+			System.out.println("Fatal Error Occoured Please Restart The Code After Checking Integrety Of Files");	//Display a fatal error and exit;
+			System.exit(0);
+		}
+
+		name=name+" "+surname;
+
+		return name.toUpperCase();
 	}
 
 	@Override
