@@ -2,18 +2,23 @@
  * @Author: Kartikay Shandil <hunter>
  * @Date:   2018-07-09T10:43:28+05:30
  * @Last modified by:   hunter
- * @Last modified time: 2018-07-09T18:21:28+05:30
+ * @Last modified time: 2018-07-09T19:37:12+05:30
  */
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -24,10 +29,11 @@ import java.util.Scanner;
 import java.io.File;
 
 
+
 public class NameGenerator extends Application {
 
 	private static Scene scene;
-	private static Text name;
+	private static TextField name;
 	private static void sceneGenerator(){
 
 		StackPane sp=new StackPane();
@@ -125,16 +131,20 @@ public class NameGenerator extends Application {
 		startButton.setTranslateY(40);
 
 
-		final Text name=new Text();
+		final TextField name=new TextField();
+		name.setVisible(false);
+		name.setBackground(new Background(new BackgroundFill(Color.AQUA, CornerRadii.EMPTY,Insets.EMPTY)));
 
 		startButton.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-
-				name.setText(nameGen(tg,tg2));
+				String n=nameGen(tg,tg2);
+				name.setText(n);
 				name.setFont(new Font(40));
-				name.setTextAlignment(TextAlignment.CENTER);
-				name.setFill(Color.RED);
-				name.setTranslateY(-50);
+				name.setAlignment(Pos.CENTER);
+				name.autosize();
+				name.setTranslateY(-100);
+				name.setVisible(true);
+				name.setEditable(false);
 				startButton.setText("REGENERATE");
     	}
 		});
@@ -142,7 +152,7 @@ public class NameGenerator extends Application {
 		NameGenerator.name=name;
 
 		sp.getChildren().addAll(title,origin,gender,indian,foreign,both,male,female,both2,startButton,NameGenerator.name);
-
+		sp.setBackground(new Background(new BackgroundFill(Color.AQUA, CornerRadii.EMPTY,Insets.EMPTY)));
 		// Alignment Changes
 
 		StackPane.setAlignment(title, Pos.TOP_CENTER);
