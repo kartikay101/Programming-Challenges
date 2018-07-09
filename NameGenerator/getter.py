@@ -13,7 +13,7 @@ def database_populate(url,fname):
     data = res.text
 
     filepath=os.path.realpath(__file__)
-    filepath=filepath.replace('/getter.py','/'+fname+'.txt')
+    filepath=filepath.replace('/getter.py','/res/'+fname+'.txt')
     file=open(filepath,'w+')
     soup = BeautifulSoup(data,'lxml')
 
