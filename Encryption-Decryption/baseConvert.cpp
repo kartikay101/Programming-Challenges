@@ -2,7 +2,7 @@
  * @Author: Kartikay Shandil <kartikay101>
  * @Date:   2018-07-10T11:35:09+05:30
  * @Last modified by:   kartikay101
- * @Last modified time: 2018-07-11T16:40:34+05:30
+ * @Last modified time: 2018-07-11T21:49:55+05:30
  */
 
 // The input file is Input.txt present in res folder.
@@ -15,16 +15,39 @@ const std::string ofile_path="res/base64.txt";
 const std::string encode_decode="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 std::string toBase64(std::string binary){
-  char ch;
-  std::string res="This will be the result";
-  int len=binary.length();
-  int num=0;
 
-  for(int i=0;i<len;i+=6){
-    num=2;
+  int len=binary.length();
+  binary.substr(0,len-8); // removing last unintended newline character 00001010
+  len-=8;
+  char ch;
+  std::string res="";
+  std::string padding="";
+  int pad=len%6;
+
+  for(int i=0;i<pad;i++){
+    binary+='0';
+  }
+  while (pad%8!=0) {
+    pad=pad+6;
+    padding+='=';
   }
 
-  return res;
+  int num=0,cnt=0,x=32,byte;
+
+  for(int i=0;i<len;i++){
+    cnt++;
+    byte=binary[i]=='1'?1:0;
+    num+=x*byte;
+    x/=2;
+    if(cnt==6){
+      res+=encode_decode[num];
+      x=32;
+      num=0;
+      cnt=0;
+    }
+  }
+
+  return res+padding;
 }
 
 std::string toBinary(char ch){
@@ -60,7 +83,6 @@ int main(int argc, char const *argv[]) {
   std::string binary="";
 
   while (input.get(ch)){
-    if(!input.eof())
     binary+=toBinary(ch);
   }
   output<<toBase64(binary);
