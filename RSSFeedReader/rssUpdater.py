@@ -2,6 +2,8 @@ import os
 import requests
 from lxml import etree
 
+import re
+writer=open('final.html','w')
 class color:
    PURPLE = '\033[95m'
    CYAN = '\033[96m'
@@ -21,6 +23,7 @@ def feedGetter(feedurl):
     xml =etree.fromstring((raw_feed.text).encode('utf-8'),parser=utf8_parser)
     rss=xml.getchildren()
     channel=rss[0].getchildren()
+   # writer=open('final.html','w')
     try:
         print(channel[0].text+"\n\n")
         #print(channel[1].text+"\n\n")
@@ -29,8 +32,25 @@ def feedGetter(feedurl):
         print(False)
     for nodes in channel:
         if nodes.tag=='item':
-            nodes.getchildren()
-            
+            sub=nodes.getchildren()
+            for data in sub:
+                if data.tag=='title':
+                    print(color.GREEN+data.text.upper()+color.END)
+                  #  writer.write('<h3>'+data.text.upper()+'</h3>\n')   
+                    break
+           # writer.write('<br/>\n')    
+            for data in sub:
+                if data.tag=='description':
+                    description=data.text
+                    if description is not None:
+                         description=re.sub('<a.*/a>','',description)
+                         description=re.sub('</cite>','',description)
+                         description=re.sub('<cite>','',description)
+                         print(color.RED+description+color.END)
+            #             writer.write('<span>'+description+'</span>\n')
+                    break
+          #:  print(sub.findtext('link').text)
+
 
     #print(etree.tostring(xml,pretty_print=True))
 
@@ -46,3 +66,4 @@ def feedUpdate():
         feedGetter(feeds)
 
 feedUpdate()
+writer.close()
