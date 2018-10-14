@@ -1,8 +1,8 @@
 /**
- * @Author: Kartikay Shandil <hunter>
+ * @Author: Kartikay Shandil <kartikay101>
  * @Date:   2018-10-12T11:26:12+05:30
- * @Last modified by:   hunter
- * @Last modified time: 2018-10-14T16:34:04+05:30
+ * @Last modified by:   kartikay101
+ * @Last modified time: 2018-10-15T00:20:17+05:30
  */
 
 #include <usb.h>
@@ -63,15 +63,14 @@ std::string getserial(std::string device){
 
   std::string bus=(device.substr(4,3));
   std::string dev=device.substr(15,3);
-
-  std::stringstream s;
+  std::stringstream s,ss;
   int x;
   std::string m="   ";
   s<<bus;
   s>>x;
   bus="0"+std::to_string(x);
-  s<<dev;
-  s>>x;
+  ss<<dev;
+  ss>>x;
   dev=std::to_string(x);
   dev=m.substr(0,3-dev.length())+dev;
 
