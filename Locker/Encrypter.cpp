@@ -2,7 +2,7 @@
  * @Author: Kartikay Shandil <kartikay101>
  * @Date:   2018-10-12T11:26:12+05:30
  * @Last modified by:   kartikay101
- * @Last modified time: 2018-10-15T00:20:17+05:30
+ * @Last modified time: 2018-10-15T00:22:45+05:30
  */
 
 #include <usb.h>
@@ -84,14 +84,15 @@ std::string getserial(std::string device){
   std::regex pattern1("Bus="+bus);
   std::regex pattern2("Dev#="+dev);
   while(getline(read,temp)){
+    if(flag){
+
+      res+=temp;
+    }
     if(temp[0]=='T'&&regex_search(temp,pattern1)&&regex_search(temp,pattern2)){
       flag=true;
     }
     else if(temp[0]=='T'){
       flag=false;
-    }
-    if(flag){
-      res+=temp;
     }
   }
   system(("rm "+file).c_str());
