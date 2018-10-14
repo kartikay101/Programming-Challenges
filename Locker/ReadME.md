@@ -1,7 +1,7 @@
 Lock your Personal Data Using Encryption And Use A USB device as a key to it.
 
-Run order :
+Changed the files so that single file can be used to Setup, Encrypt, Decrypt.
 
-1. Setup
-2. Locker
+Setup can be used to change the device only if current state is decrypted.
 
+If the file is not decrypted, the key cannot be changed.
