@@ -1,8 +1,8 @@
 /**
  * @Author: Kartikay Shandil <kartikay101>
  * @Date:   2018-10-12T11:26:12+05:30
- * @Last modified by:   kartikay101
- * @Last modified time: 2018-10-15T00:22:45+05:30
+ * @Last modified by:   hunter
+ * @Last modified time: 2018-10-16T20:44:23+05:30
  */
 
 #include <usb.h>
@@ -12,10 +12,12 @@
 #include <algorithm>
 #include <unordered_set>
 #include <regex>
+#include "cryptopp/hkdf"
 #include "string.h"
 #include "cryptopp/sha.h"
 #include "cryptopp/base64.h"
 #include "cryptopp/filters.h"
+#include "cryptopp/aes.h"
 #include "stdlib.h"
 #include "stdio.h"
 #include "string.h"
@@ -188,13 +190,32 @@ std::string detect(){
   system(command.c_str());
   return device;
 }
-void encrypter(){
+void encryptor(std::string deviceInitials){
   std::cout << "The encrpytion process Will begin in 5 seconds\nTo cancel Press \"Ctrl + C\"\nPlease do not cancel it in between\nThis will result in loss of data"<< '\n';
   interactivesleep(6);
   clearscr();
   std::cout << "Please do not cancel the process now." << '\n';
-  sleep(2);
+  interactivesleep(3);
+  std::cout << "Generating Key Please Wait" << '\n';
+  std::string passkey=keygen(deviceInitials);
+  std::string ivkey=keygen(passkey);  // can this cause a problem ??
+  interactivesleep(2);
 
+  SecByteBlock key(AES::MAX_KEYLENGTH+AES::BLOCKSIZE);
+  std::string password(passkey), iv(ivkey), message("This is gg");
+  std::string encrypted, recovered;
+  cryptopp::CBF_MODE<AES>::Encryption crypt;
+  HKDF<SHA256> hkdf;
+  hkdf.DeriveKey(key, key.size(), (const byte*)password.data(), password.size(), (const byte*)iv.data(), iv.size(), NULL, 0);
+
+      cryptopp::CTR_Mode<AES>::Encryption encryption;
+      encryption.SetKeyWithIV(key, AES::MAX_KEYLENGTH, key+AES::MAX_KEYLENGTH);
+
+      cryptopp::StringSource encryptor(message, true,
+        new StreamTransformationFilter(encryption,
+          new StringSink(encrypted))
+      );
+      std::cout << encrypted << '\n';
 }
 void init(){
   clearscr();
@@ -203,12 +224,14 @@ void init(){
   std::cout << "Press Any Key To Continue..." << '\n';
   getchar();
   clearscr();
-  std::cout << keygen(detect()) << '\n';
-  //encrypt(detect());
+  std::string deviceInitials=detect();
+  encryptor(deviceInitials);
 }
 
 int main(int argc, char const *argv[]) {
   srand(time(0));
-  init();
+  //init();
+  std::string deviceInitials=detect();
+  encryptor(deviceInitials);
   return 0;
 }
